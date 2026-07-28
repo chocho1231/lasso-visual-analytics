@@ -1,10 +1,16 @@
 import duckdb
 
 class LassoDataClient:
-    #def __init__(self, data_path="my_sample_data.parquet"): 
-    def __init__(self, data_path="data/mbpp_798__sum_two_runs.parquet"):
+    def __init__(self, 
+                 data_path="data/mbpp_798__sum_two_runs.parquet",
+                 be_data_path="data/mbpp_798__sum_be_runs.parquet"): # 新增 BE 数据路径
         self.conn = duckdb.connect(database=":memory:", read_only=False)
+        
+        # 1. 注册核心视图 (用于 SRM 和 Diff 视图)
         self.conn.execute(f"CREATE VIEW observations AS SELECT * FROM read_parquet('{data_path}')")
+        
+        # 2. 注册 BE 专属视图 (用于 Behavioral Evolution 视图，解决审阅者的问题 1)
+        self.conn.execute(f"CREATE VIEW be_observations AS SELECT * FROM read_parquet('{be_data_path}')")
     
     def get_srm_matrix(self, problem_id: str):
         query = f"""
