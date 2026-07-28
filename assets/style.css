@@ -1,0 +1,64 @@
+/* assets/style.css */
+details.custom-fold > summary {
+    list-style: none;
+}
+details.custom-fold > summary::-webkit-details-marker {
+    display: none;
+}
+details.custom-fold > summary::before {
+    content: '›';
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    margin-right: 6px;
+    transition: transform 0.2s ease-in-out;
+    vertical-align: middle;
+}
+details.custom-fold[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.transition-row {
+    transition: background-color 0.15s ease;
+}
+.transition-row:hover {
+    background-color: #fff7ed !important;
+    cursor: pointer;
+}
+
+details > summary::-webkit-details-marker {
+    display: none;
+}
+details > summary {
+    list-style: none;
+    cursor: pointer;
+}
+details > summary::-webkit-marker {
+    display: none;
+}
+
+.be-transition-card {
+    transition: all 0.2s ease;
+}
+.be-transition-card:hover {
+    border-color: #f97316 !important;
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.08);
+}
+
+/* Cursor Styles */
+#be-heatmap, #heatmap,
+.plotly,
+.nsewdrag,
+.cursor-crosshair,
+.point,
+rect.js-line {
+    cursor: pointer !important;
+}
+
+/* remove opacity for unselected elements */
+.js-plotly-plot .plotly .unselected,
+.js-plotly-plot .plotly g.points path.unselected,
+.js-plotly-plot .plotly .heatmaplayer path.unselected {
+    opacity: 1 !important;
+}

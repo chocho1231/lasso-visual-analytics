@@ -1,0 +1,15 @@
+# Python 
+__pycache__/
+*.py[cod]
+.venv/
+env/
+
+# DuckDB 
+*.duckdb
+*.db
+*.wal
+
+# IDE and invisible files in system
+.vscode/
+.idea/
+.DS_Store
