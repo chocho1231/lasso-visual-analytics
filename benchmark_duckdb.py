@@ -1,3 +1,19 @@
+"""
+Copyright (c) 2026, Chair of Software Technology
+All rights reserved.
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+• Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+• Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+• Neither the name of the University Mannheim nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+"""
+
+"""
+LASSO Visual Analytics — Dash app
+Run: uv run python app.py  →  http://localhost:8050
+"""
+
 import time
 import statistics
 import duckdb
@@ -7,9 +23,7 @@ from pathlib import Path
 from core.queries import (
     behavioral_clustering,
     srm_pivot,
-    diff_view,
-    be_cluster_per_run,
-    step_vulnerability
+    diff_view
 )
 
 # 1. Config
@@ -42,9 +56,7 @@ print("Warmup done.\n")
 QUERIES = {
     "Behavioral Clustering": lambda: behavioral_clustering(conn, PROBLEM_ID, BASELINE_RUN_ID),
     "SRM Pivot": lambda: srm_pivot(conn, PROBLEM_ID, BASELINE_RUN_ID),
-    "Diff View": lambda: diff_view(conn, PROBLEM_ID, BASELINE_RUN_ID, TARGET_RUN_ID, []),
-    "Behavioral Evolution (Timeline)": lambda: be_cluster_per_run(conn, PROBLEM_ID, [BASELINE_RUN_ID, TARGET_RUN_ID]),
-    "Step Vulnerability": lambda: step_vulnerability(conn, PROBLEM_ID, BASELINE_RUN_ID, [])
+    "Diff View": lambda: diff_view(conn, PROBLEM_ID, BASELINE_RUN_ID, TARGET_RUN_ID, [])
 }
 
 # 4. Execute Benchmark

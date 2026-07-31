@@ -1195,14 +1195,13 @@ def update_selected_step(click_data, sv_clicks, problem_id, cluster_val, deviant
         return ({"test": triggered["test"], "step": triggered["step"]},
                 triggered["test"])
 
-    # Heatmap cell clicked → 双重保险解析
+    # Heatmap cell clicked
     if click_data:
         point = click_data["points"][0]
         custom = point.get("customdata", [])
         x_label = point.get("x")
         if len(custom) >= 3:
             return {"test": custom[0], "step": int(custom[1]), "impl": x_label}, None
-        # 兜底：直接从 y 轴文字解析（例如 "testSumNullList()·s0"）
         y_val = point.get("y", "")
         if "·s" in y_val:
             parts = y_val.rsplit("·s", 1)
@@ -1468,9 +1467,6 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
         impl_label, color_map, cluster_sizes, sv_df
     )
     
-    # ==========================================
-    # 核心修改：Cluster 模式下的图表高亮与右侧面板注入
-    # ==========================================
     if selected_step and isinstance(selected_step, dict):
         test_val = selected_step.get("test")
         step_val = selected_step.get("step")
@@ -1479,7 +1475,7 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
         if test_val is not None and step_val is not None:
             y_val = f"{test_val}·s{step_val}"
             
-            # --- 1. 图表高亮（仅高亮当前行和焦点 Cell，取消列高亮） ---
+            # --- 1. highlight seleced row ---
             if "data" in fig and len(fig["data"]) > 0:
                 trace = fig["data"][0]
                 x_labels_current = getattr(trace, "x", [])
@@ -1496,8 +1492,8 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
                         cols_len = len(z_matrix[0]) if rows_len > 0 else 0
                         
                         highlight_z = np.zeros((rows_len, cols_len))
-                        highlight_z[row_idx, :] = 1  # 仅高亮当前行
-                        highlight_z[row_idx, col_idx] = 2 # 加深焦点 Cell
+                        highlight_z[row_idx, :] = 1  
+                        highlight_z[row_idx, col_idx] = 2 
                         
                         fig.add_trace(
                             go.Heatmap(
@@ -1506,8 +1502,8 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
                                 y=y_labels_current,
                                 colorscale=[
                                     [0, "rgba(0,0,0,0)"],
-                                    [0.5, "rgba(253, 224, 71, 0.25)"],  # 行高亮浅黄
-                                    [1.0, "rgba(250, 204, 21, 0.45)"],  # Cell 焦点深黄
+                                    [0.5, "rgba(253, 224, 71, 0.25)"],  
+                                    [1.0, "rgba(250, 204, 21, 0.45)"],  
                                 ],
                                 showscale=False,
                                 hoverinfo="skip",
@@ -1569,7 +1565,6 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
                     is_oracle = (cl == "A")
                     is_clicked = (cl == clicked_cluster)
                     
-                    # 3. 核心过滤逻辑：如果不是 Oracle，且没有点中它，且它的输出跟 Oracle 一模一样（没有偏离），则不显示
                     if not is_oracle and not is_clicked and out_val == oracle_output:
                         continue
                         
@@ -1577,25 +1572,22 @@ def update(problem_id, mode, cluster_val, deviant_only_val,
                     cl_color = color_map.get(cl, "#9ca3af") if not is_oracle else "#0ea5e9"
                     label = "Oracle" if is_oracle else f"Cluster {cl}"
                     
-                    # 4. 视觉样式判定：为点击的卡片增加显眼的高亮色
                     if is_oracle:
                         bg_color = "#f0fdfa"
                         border_color = "#ccfbf1"
                     elif is_clicked:
-                        bg_color = "#fef3c7"      # 选中的卡片背景：浅黄色
-                        border_color = "#fde68a"  # 选中的卡片边框：深黄色
+                        bg_color = "#fef3c7"      
+                        border_color = "#fde68a"  
                     else:
                         bg_color = "#fff7ed"
                         border_color = "#ffedd5"
                     
-                    # 组装 Summary 的标题栏
                     summary_elements = [
                         html.Span("■ ", style={"color": cl_color, "fontSize": 12, "marginRight": 4, "verticalAlign": "middle"}),
                         html.Span(label, style={"fontWeight": 600, "fontSize": 11, "color": "#374151", "marginRight": 8, "verticalAlign": "middle"}),
                         html.Span(f"{count} impls", style={"fontSize": 10, "color": "#6b7280", "verticalAlign": "middle"}),
                     ]
                     
-                    # 5. 给用户点中的 Cluster 加上专属徽标
                     if is_clicked:
                         summary_elements.append(
                             html.Span("SELECTED", style={
